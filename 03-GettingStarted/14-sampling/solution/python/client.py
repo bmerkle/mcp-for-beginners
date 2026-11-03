@@ -1,6 +1,10 @@
 """
 MCP client that answers the server's sampling requests with Azure OpenAI.
 
+DEPRECATED FEATURE: Sampling is deprecated in MCP 2026-07-28. This client keeps
+the legacy flow working: it connects with the 2025-11-25 `initialize` handshake
+and answers the server's `sampling/createMessage` requests by calling Azure OpenAI.
+
 Set AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY and AZURE_OPENAI_DEPLOYMENT,
 then run (from this folder):
     python client.py
@@ -72,7 +76,8 @@ async def handle_sampling_message(
 async def run():
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write, sampling_callback=handle_sampling_message) as session:
-            # Initialize the connection
+            # The 2025-11-25 initialize handshake. Sampling needs it: on a
+            # 2026-07-28 connection the server cannot send sampling requests.
             await session.initialize()
 
             # List available prompts

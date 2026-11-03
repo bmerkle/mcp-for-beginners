@@ -1,9 +1,16 @@
 # Running this sample
 
 > [!WARNING]
-> This sample uses deprecated Sampling. It is retained for MCP `2025-11-25`
-> compatibility, and the server prints an `MCPDeprecationWarning`. New
-> implementations should call an LLM provider directly.
+> This solution uses Sampling (`sampling/createMessage`), which is deprecated
+> as of MCP `2026-07-28`, and the server prints an `MCPDeprecationWarning`. New
+> servers should integrate directly with an LLM provider API instead; see the
+> [Deprecated Features](https://modelcontextprotocol.io/specification/2026-07-28/deprecated)
+> registry and the
+> [recommended replacement](../../README.md#recommended-replacement-call-the-llm-provider-directly)
+> in this lesson. The sample is kept because existing servers and clients still
+> use Sampling over `2025-11-25` connections. That's why `client.py` calls
+> `session.initialize()`: on a `2026-07-28` connection the server can't send
+> sampling requests and the tool call fails with `NoBackChannelError`.
 
 The client starts `server.py` itself over stdio. When the server's `create_product` tool asks the client for an LLM completion (sampling), the client answers it with a model deployed in Microsoft Foundry (Azure OpenAI).
 
