@@ -25,10 +25,10 @@ If your server is meant to be consumed by running on users machine, you can foll
 1. **Download the server**. If you didn't write the server, then download it first to your machine. 
 1. **Start the server process**: Run your MCP server application 
 
-For HTTP-based servers, using Streamable HTTP or the legacy SSE transport (not needed for a stdio server, which the client starts itself):
+For HTTP-based servers (not needed for a stdio server, which the client starts itself):
 
 1. **Configure networking**: Ensure the server is accessible on the expected port
-1. **Connect clients**: Use local connection URLs including the MCP endpoint, like `http://localhost:3000/mcp` for Streamable HTTP or `http://localhost:8000/sse` for SSE
+1. **Connect clients**: Use the server's Streamable HTTP endpoint, for example `http://localhost:3000/mcp`. A server that still uses the legacy SSE transport serves `/sse` instead, for example `http://localhost:8000/sse`
 
 ## Cloud Deployment
 
@@ -40,7 +40,7 @@ MCP servers can be deployed to various cloud platforms:
 
 ### Example: Azure Container Apps
 
-Azure Container Apps can host remote MCP servers. The sample used below is a weather server that uses the legacy HTTP+SSE transport with MCP Python SDK 1.x; the same deployment steps apply to a Streamable HTTP server.
+Azure Container Apps can host remote MCP servers. New servers should expose Streamable HTTP (usually at `/mcp`). The external sample used below predates Streamable HTTP: it is a weather server that serves the legacy SSE transport at `/sse` with MCP Python SDK 1.x, so its client configuration uses `"type": "sse"`. The same deployment steps apply to a Streamable HTTP server; use `"type": "http"` and the `/mcp` URL in that case.
 
 You need Python 3.13 or later, [uv](https://docs.astral.sh/uv/), and the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) for the deployment step.
 
