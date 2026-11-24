@@ -58,41 +58,29 @@ To test the solution in Visual Studio Code, do the following:
 
 ## Choice -2- Test the app with a host
 
-The repo <https://github.com/modelcontextprotocol/ext-apps> contains several different hosts that you can use to test your MCP Apps. 
+This lesson includes a copy of the basic host from <https://github.com/modelcontextprotocol/ext-apps> in [*ext-apps/examples/basic-host*](../../ext-apps/examples/basic-host/). It installs and builds on its own, so you don't need to clone the upstream repo. That repo contains more hosts if you want to try others.
 
-We will present you with two different options here:
+Keep the backend from the previous step running, then in a separate terminal:
 
-### Local machine
+1. Navigate to *03-GettingStarted/15-mcp-apps/ext-apps/examples/basic-host*.
 
-- Navigate to *ext-apps* after you've cloned the repo.
+1. Install dependencies:
 
-- Install dependencies
+    ```sh
+    npm install
+    ```
 
-   ```sh
-   npm install
-   ```
-
-- In a separate terminal window, navigate to *ext-apps/examples/basic-host*
-
-    > The host connects to `http://localhost:3001/mcp` by default. In a Codespace, point it at your forwarded backend URL with the `SERVERS` environment variable instead, for example `SERVERS='["https://<codespace-name>-3001.app.github.dev/mcp"]' npm start`
-
-- Run the host:
+1. Build and start the host:
 
     ```sh
     npm start
     ```
 
-    This should connect the host with backend and you should see the app running like so:
+    This serves the host on `http://localhost:8080` (and its sandbox on port 8081). Open it in your browser; it connects to the backend at `http://localhost:3001/mcp` and you should see the app running like so:
 
     ![App running](../../assets/mcp-app.png)
 
-### Codespace
-
-It takes a bit of extra work to get a Codespace environment to work. To use a host through Codespace: 
-
-- See the *ext-apps* directory and navigate to *examples/basic-host*. 
-- Run `npm install` to install dependencies
-- Run `npm start` to start the host.
+> **Codespace:** forward ports 8080 and 8081, and point the host at your forwarded backend URL with the `SERVERS` environment variable, for example `SERVERS='["https://<codespace-name>-3001.app.github.dev/mcp"]' npm start`.
 
 ## Test out the app
 
