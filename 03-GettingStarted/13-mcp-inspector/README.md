@@ -1,9 +1,10 @@
 # Debugging with MCP Inspector
 
 > [!NOTE]
-> Commands using `--transport sse` and URLs ending in `/sse` test the legacy HTTP+SSE
-> transport. For a new MCP `2026-07-28` server, use an Inspector version that
-> supports Streamable HTTP and select that transport instead.
+> Network examples in this guide use the **Streamable HTTP** transport
+> (`--transport http`) and the server's `/mcp` endpoint. The older HTTP+SSE
+> transport (`/sse` endpoint) was deprecated in MCP spec `2025-03-26`; use
+> `--transport sse` only to test legacy servers that have not migrated yet.
 
 The **MCP Inspector** is an essential debugging tool that lets you interactively test and troubleshoot your MCP servers without needing a full AI host application. Think of it as "Postman for MCP" - it provides a visual interface to send requests, view responses, and understand how your server behaves.
 
@@ -74,22 +75,22 @@ npx @modelcontextprotocol/inspector node ./build/index.js
 npx @modelcontextprotocol/inspector -e OPENAI_API_KEY=xxx python server.py
 ```
 
-### SSE/HTTP Servers (Network)
+### Streamable HTTP Servers (Network)
 
 For servers running as HTTP services:
 
 1. Start your server first:
    ```bash
-   python server.py  # Server running on http://localhost:8080
+   python server.py  # Streamable HTTP endpoint at http://localhost:8080/mcp
    ```
 
 2. Launch Inspector and connect:
    ```bash
-   # Legacy HTTP+SSE server
-   npx @modelcontextprotocol/inspector --transport sse --server-url http://localhost:8080/sse
-
    # Streamable HTTP server
    npx @modelcontextprotocol/inspector --transport http --server-url http://localhost:8080/mcp
+
+   # Legacy HTTP+SSE server (only exposes /sse)
+   npx @modelcontextprotocol/inspector --transport sse --server-url http://localhost:8080/sse
    ```
 
 ---
@@ -284,7 +285,7 @@ Add to `.vscode/launch.json`:
       "console": "integratedTerminal"
     },
     {
-      "name": "Debug SSE Server with Inspector",
+      "name": "Open MCP Inspector",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:6274/?MCP_INSPECTOR_API_TOKEN=local-dev-token",
