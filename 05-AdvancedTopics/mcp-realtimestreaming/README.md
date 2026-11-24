@@ -289,18 +289,21 @@ async def consume_window(
                         total=max_events,
                         message=f"{event['sensor_id']}={event['value']}",
                     )
+        # Build the summary before committing: if a bad record makes it fail,
+        # the offsets stay uncommitted and the records are delivered again.
+        by_sensor: dict[str, list[float]] = {}
+        for event in events:
+            by_sensor.setdefault(event["sensor_id"], []).append(float(event["value"]))
+        summary: WindowSummary = {
+            "events_processed": len(events),
+            "averages": {s: sum(v) / len(v) for s, v in by_sensor.items()},
+        }
         # Commit only after processing, so a crash re-delivers instead of losing data.
         await consumer.commit()
     finally:
         await consumer.stop()
 
-    by_sensor: dict[str, list[float]] = {}
-    for event in events:
-        by_sensor.setdefault(event["sensor_id"], []).append(event["value"])
-    return {
-        "events_processed": len(events),
-        "averages": {s: sum(v) / len(v) for s, v in by_sensor.items()},
-    }
+    return summary
 
 
 if __name__ == "__main__":
