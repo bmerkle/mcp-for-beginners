@@ -284,12 +284,14 @@ async def handle_sampling(
             options[key] = extras[key]
 
     response = await llm.chat.completions.create(model=DEPLOYMENT, messages=messages, **options)
+    choice = response.choices[0]
 
     return types.CreateMessageResult(
         role="assistant",
-        content=types.TextContent(type="text", text=response.choices[0].message.content),
+        content=types.TextContent(type="text", text=choice.message.content),
         model=DEPLOYMENT,
-        stop_reason="endTurn",
+        # Tell the server when the answer was cut off by the token limit
+        stop_reason="maxTokens" if choice.finish_reason == "length" else "endTurn",
     )
 
 

@@ -52,12 +52,10 @@ async def generate_abstract(title: str, content: str) -> str:
 @mcp.tool()
 async def create_blog(title: str, content: str) -> str:
     """Create a blog post and generate a summary"""
-    post = BlogPost(
-        id=len(posts) + 1,
-        title=title,
-        content=content,
-        abstract=await generate_abstract(title, content),
-    )
+    # Await the LLM first, then assign the ID and append with no await in
+    # between, so concurrent calls can't get the same ID.
+    abstract = await generate_abstract(title, content)
+    post = BlogPost(id=len(posts) + 1, title=title, content=content, abstract=abstract)
     posts.append(post)
 
     return json.dumps({"id": post.id, "title": post.title, "abstract": post.abstract})
