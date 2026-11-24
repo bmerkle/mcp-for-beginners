@@ -48,4 +48,4 @@ Try changing the `token` in `src/client.ts` to "secret1234", run `npm run build`
 Error initializing client: StreamableHTTPError: Streamable HTTP error: Error POSTing to endpoint: Unauthorized
 ```
 
-this means the server rejected the credential with `401 Unauthorized`. A missing `Authorization` header, a header without the `Bearer ` prefix, or a wrong token all get the same response.
+this means the server rejected the credential with `401 Unauthorized`. A missing `Authorization` header, a header without the `Bearer` prefix, or a wrong token all get the same response.
