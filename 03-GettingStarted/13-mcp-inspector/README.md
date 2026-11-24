@@ -1,7 +1,7 @@
 # Debugging with MCP Inspector
 
 > [!NOTE]
-> Commands using `--sse` and URLs ending in `/sse` test the legacy HTTP+SSE
+> Commands using `--transport sse` and URLs ending in `/sse` test the legacy HTTP+SSE
 > transport. For a new MCP `2026-07-28` server, use an Inspector version that
 > supports Streamable HTTP and select that transport instead.
 
@@ -85,14 +85,18 @@ For servers running as HTTP services:
 
 2. Launch Inspector and connect:
    ```bash
-   npx @modelcontextprotocol/inspector --sse http://localhost:8080/sse
+   # Legacy HTTP+SSE server
+   npx @modelcontextprotocol/inspector --transport sse --server-url http://localhost:8080/sse
+
+   # Streamable HTTP server
+   npx @modelcontextprotocol/inspector --transport http --server-url http://localhost:8080/mcp
    ```
 
 ---
 
 ## Inspector Interface Overview
 
-When Inspector launches, you'll see a web interface (typically at `http://localhost:5173`):
+When Inspector launches, you'll see a web interface (by default at `http://localhost:6274`):
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
