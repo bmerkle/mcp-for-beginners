@@ -434,7 +434,7 @@ Legacy MCP versions support server-side logging levels that clients can control.
 ```python
 import logging
 import sys
-from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver import Context, MCPServer
 
 mcp = MCPServer("logging-server")
 
