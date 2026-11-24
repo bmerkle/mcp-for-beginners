@@ -1,9 +1,10 @@
 # Setting Up Popular MCP Host Clients
 
 > [!NOTE]
-> Host configurations that point to `/sse` are legacy HTTP+SSE examples for
-> MCP `2025-11-25`. For MCP `2026-07-28`, select Streamable HTTP in hosts that
-> support it and use the endpoint configured by the server.
+> Remote examples in this guide use the **Streamable HTTP** transport, served at
+> the server's `/mcp` endpoint (for example `http://localhost:8080/mcp`). The
+> older HTTP+SSE transport (`/sse` endpoint) was deprecated in MCP spec
+> `2025-03-26`; only use it for legacy servers that have not migrated yet.
 
 This guide covers how to configure and use MCP servers with popular AI host applications. Each host has its own configuration approach, but once set up, they all communicate with MCP servers using the standardized protocol.
 
@@ -85,6 +86,11 @@ Claude Desktop uses a JSON configuration file to define MCP servers.
 | `args` | Command line arguments | `["-m", "my_server"]` |
 | `env` | Environment variables | `{"API_KEY": "xxx"}` |
 | `cwd` | Working directory | `"/path/to/server"` |
+
+> **Remote servers:** `claude_desktop_config.json` launches local (stdio)
+> servers. To connect Claude Desktop to a remote Streamable HTTP server, open
+> **Settings → Connectors → Add custom connector** and enter the server's
+> `https://.../mcp` URL. See [Connect to remote MCP servers](https://modelcontextprotocol.io/docs/develop/connect-remote-servers).
 
 ### Testing Your Setup
 
@@ -281,16 +287,20 @@ Windsurf is now part of Devin Desktop, and its MCP setup has changed. MCP server
 
 Different hosts support different transport mechanisms:
 
-| Host | stdio | SSE/HTTP | WebSocket |
-|------|-------|----------|-----------|
-| Claude Desktop | ✅ | ❌ | ❌ |
+| Host | stdio | Streamable HTTP | WebSocket |
+|------|-------|-----------------|-----------|
+| Claude Desktop | ✅ | ✅ (remote, via Connectors) | ❌ |
 | VS Code | ✅ | ✅ | ❌ |
 | Cursor | ✅ | ✅ | ❌ |
 | Cline | ✅ | ✅ | ❌ |
 | Windsurf | ✅ | ✅ | ❌ |
 
 **stdio** (standard input/output): Best for local servers started by the host
-**SSE/HTTP**: Best for remote servers or servers shared between multiple clients
+**Streamable HTTP**: Best for remote servers or servers shared between
+multiple clients (endpoint usually `/mcp`)
+
+Legacy HTTP+SSE (`/sse`) is deprecated. Some hosts still accept it for older
+servers, but new servers should use Streamable HTTP.
 
 ---
 
