@@ -14,6 +14,7 @@ import logging
 
 # Import MCPServer - the high-level MCP server API (called FastMCP in mcp 1.x)
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
 # Configure module logger
 logging.basicConfig(level=logging.INFO)
@@ -38,7 +39,9 @@ def completion(model: str, prompt: str, temperature: float = 0.7, max_tokens: in
     """
     # Validate model
     if model not in AVAILABLE_MODELS:
-        raise ValueError(f"Model {model} not supported")
+        # ToolError sends this message to the client; other exceptions are
+        # reported only as a generic "Error executing tool" message.
+        raise ToolError(f"Model {model} not supported")
     
     # In a real implementation, this would call an AI model
     # Here we provide a more comprehensive mock response based on the prompt
