@@ -64,6 +64,13 @@ A **GitHub Clone MCP Server** (`git_mcp_server`) that provides:
    - Choose **Python template** for maximum flexibility
    - **Server Name:** `git_mcp_server`
 
+4. **Switch the generated project to Streamable HTTP.** The Toolkit template may still generate a project for the legacy SSE transport (`src/__init__.py sse`, a `/sse` URL). Make the same changes as in [Lab 3, Step 4](../lab3/README.md#step-4-upgrade-to-latest-mcp-sdk), keeping the server name and port that the template generated:
+   - **`src/__init__.py`:** accept `http` and run `server.run(transport="streamable-http", host="127.0.0.1", port=port)`, as in [./code/github_mcp_server/src/__init__.py](./code/github_mcp_server/src/__init__.py). The endpoint is then `http://localhost:<port>/mcp`.
+   - **`.vscode/tasks.json`:** in the `Start MCP Server` task, change the last argument from `sse` to `http`, for example `python -m debugpy --listen 127.0.0.1:5678 src/__init__.py http`. Otherwise the debug task exits with "Invalid transport type".
+   - **`.vscode/launch.json`:** in the Inspector launch configurations, drop the `serverUrl=.../sse` query from the URL so it opens `http://localhost:6274`.
+   - **`.aitk/mcp.json`:** change the server entry to `"type": "http"` and replace the `/sse` URL with `/mcp`, for example `"url": "http://localhost:3001/mcp"`.
+   - **`inspector/package.json`:** point `dev:inspector` at the same endpoint, as in [./code/github_mcp_server/inspector/package.json](./code/github_mcp_server/inspector/package.json).
+
 ### Step 2: Configure GitHub Copilot Agent Mode
 
 1. **Open GitHub Copilot** in VS Code (Ctrl/Cmd + Shift + P → "GitHub Copilot: Open")
