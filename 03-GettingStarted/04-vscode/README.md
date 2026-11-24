@@ -70,16 +70,25 @@ Next, let's see how we can add a server entry.
 
 ### -2- Configure a server
 
-Add the following content to *mcp.json*:
+This example assumes you opened this repository in VS Code and starts the TypeScript server from [01-first-server](../01-first-server/solution/typescript/). Build that server first, in its own project folder:
+
+```bash
+cd 03-GettingStarted/01-first-server/solution/typescript
+npm install
+npm run build
+```
+
+Then add the following content to *mcp.json*:
 
 ```json
 {
     "inputs": [],
     "servers": {
        "hello-mcp": {
+           "type": "stdio",
            "command": "node",
            "args": [
-               "build/index.js"
+               "${workspaceFolder}/03-GettingStarted/01-first-server/solution/typescript/build/index.js"
            ]
        }
     }
@@ -89,7 +98,7 @@ Add the following content to *mcp.json*:
 Here's a simple example above how to start a server written in Node.js, for other runtimes point out the proper command for starting the server using `command` and `args`.
 
 > [!NOTE]
-> A relative path such as `build/index.js` is resolved from the folder you opened in VS Code, so it only works if that is the server's own project folder. Otherwise use an absolute path or `${workspaceFolder}`, for example `"${workspaceFolder}/build/index.js"`. Build the server (`npm run build`) before you start it.
+> `${workspaceFolder}` is the folder you opened in VS Code, so the path in `args` must lead from there to your server's built file. If your server lives somewhere else, use its absolute path or adjust the part after `${workspaceFolder}`. A bare relative path such as `build/index.js` only works when the folder you opened is the server's own project folder.
 
 ### -3- Start the server
 
