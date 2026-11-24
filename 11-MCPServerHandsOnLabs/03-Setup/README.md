@@ -223,7 +223,7 @@ Or install through VS Code:
 
 ### 5. Install Python
 
-Python 3.8+ is required for MCP server development.
+Python 3.10+ is required for MCP server development.
 
 #### Windows
 
@@ -561,7 +561,6 @@ import subprocess
 import requests
 import asyncpg
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
 
 async def validate_environment():
     """Comprehensive environment validation."""
@@ -606,7 +605,6 @@ async def validate_environment():
     
     # Check environment variables
     required_env_vars = [
-        'PROJECT_ENDPOINT',
         'AZURE_OPENAI_ENDPOINT',
         'EMBEDDING_MODEL_DEPLOYMENT_NAME',
         'AZURE_CLIENT_ID',
@@ -658,22 +656,35 @@ async def validate_environment():
             'error': str(e)
         }
     
-    # Check Azure AI service
-    try:
-        credential = DefaultAzureCredential()
-        project_client = AIProjectClient(
-            endpoint=os.getenv('PROJECT_ENDPOINT'),
-            credential=credential
-        )
-        
-        # This will fail if credentials are invalid
-        results['azure_ai'] = {'status': 'pass'}
-        
-    except Exception as e:
+    # Optional: check the Microsoft Foundry project. The sample's
+    # requirements.lock.txt doesn't include azure-ai-projects, so this check
+    # only runs when PROJECT_ENDPOINT is set; install the package with
+    # `pip install azure-ai-projects` to enable it.
+    project_endpoint = os.getenv('PROJECT_ENDPOINT')
+    if not project_endpoint:
         results['azure_ai'] = {
-            'status': 'fail',
-            'error': str(e)
+            'status': 'skip',
+            'note': 'PROJECT_ENDPOINT not set'
         }
+    else:
+        try:
+            from azure.ai.projects import AIProjectClient
+        except ImportError:
+            results['azure_ai'] = {
+                'status': 'fail',
+                'error': 'PROJECT_ENDPOINT is set but azure-ai-projects is not '
+                         'installed (pip install azure-ai-projects)'
+            }
+        else:
+            try:
+                credential = DefaultAzureCredential()
+                AIProjectClient(endpoint=project_endpoint, credential=credential)
+                results['azure_ai'] = {'status': 'pass'}
+            except Exception as e:
+                results['azure_ai'] = {
+                    'status': 'fail',
+                    'error': str(e)
+                }
     
     return results
 
@@ -684,12 +695,16 @@ def print_results(results):
     
     passed = 0
     failed = 0
+    skipped = 0
     
     for component, result in results.items():
         status = result.get('status', 'unknown')
         if status == 'pass':
             print(f"✅ {component}: PASS")
             passed += 1
+        elif status == 'skip':
+            print(f"⏭️  {component}: SKIPPED ({result.get('note', '')})")
+            skipped += 1
         else:
             print(f"❌ {component}: FAIL")
             if 'error' in result:
@@ -697,7 +712,7 @@ def print_results(results):
             failed += 1
     
     print("\n" + "=" * 50)
-    print(f"Summary: {passed} passed, {failed} failed")
+    print(f"Summary: {passed} passed, {failed} failed, {skipped} skipped")
     
     if failed > 0:
         print("\n❗ Please fix the failed components before proceeding.")
@@ -706,13 +721,13 @@ def print_results(results):
         print("\n🎉 All validations passed! Your environment is ready.")
         return True
 
-if __name__ == "__main__":
-    asyncio.run(main())
-
 async def main():
     results = await validate_environment()
     success = print_results(results)
     sys.exit(0 if success else 1)
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 EOF
 
